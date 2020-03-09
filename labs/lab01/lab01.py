@@ -3,7 +3,7 @@ import os
 
 import pandas as pd
 import numpy as np
-
+import math
 
 # ---------------------------------------------------------------------
 # Question # 0
@@ -59,7 +59,12 @@ def median(nums):
     True
     """
     
-    return ...
+    length = int(len(nums))
+    if (length%2==0) :
+        return (nums[int(length/2)]+nums[int(length/2)-1])/2
+    else :
+        return nums[int(length/2)]
+    #return ...
 
 
 # ---------------------------------------------------------------------
@@ -83,7 +88,17 @@ def same_diff_ints(ints):
     False
     """
 
-    return ...
+    if len(ints) == 0:
+        return False
+
+    for i in range(len(ints) - 1):
+        for j in np.arange(i,len(ints) - 1):
+            diff = abs(ints[i] - ints[j])
+            dis = abs(i-j)
+            if diff == dis:
+                return True
+
+    return False
 
 
 # ---------------------------------------------------------------------
@@ -106,9 +121,14 @@ def prefixes(s):
     >>> prefixes('aaron')
     'aaaaaraaroaaron'
     """
-
-
-    return ...
+    
+    ss = s
+    length = len(s)
+    for i in np.arange(length - 1,0,-1):
+        temp = s[:i] + ss
+        ss = temp
+    return ss
+        
 
 
 # ---------------------------------------------------------------------
@@ -132,8 +152,18 @@ def evens_reversed(N):
     >>> evens_reversed(10)
     '10 08 06 04 02'
     """
-    
-    return ...
+    ori_N = N
+    if (N%2!=0) :
+        N = N-1
+    to_return = ""
+    to_return += str(N)
+    while N>2 :
+        N -= 2
+        to_return += " "
+        if (ori_N > 9) :
+            to_return += "0"
+        to_return += str(N)
+    return to_return
 
 
 # ---------------------------------------------------------------------
