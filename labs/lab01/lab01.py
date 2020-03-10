@@ -184,7 +184,13 @@ def last_chars(fh):
     'hrg'
     """
 
-    return ...
+    string = ""
+    while True:
+        line = fh.readline()
+        string += line[-2:-1]
+        if line == '':
+            break
+    return string
 
 
 # ---------------------------------------------------------------------
@@ -209,7 +215,11 @@ def arr_1(A):
     True
     """
 
-    return ...
+    B = A.copy()
+    length = len(B)
+    for i in np.arange(length):
+        B[i] += i**2
+    return B
 
 
 def arr_2(A):
@@ -230,7 +240,14 @@ def arr_2(A):
     True
     """
 
-    return ...
+    length = len(A)
+    B = []
+    for i in np.arange(length):
+        if A[i]%16==0:
+            B.append(True)
+        else:
+            B.append(False)
+    return np.array(B)
 
 
 def arr_3(A):
@@ -254,7 +271,11 @@ def arr_3(A):
     True
     """
 
-    return ...
+    length = len(A)
+    B = []
+    for i in np.arange(length-1):
+        B.append(round(((A[i+1]/A[i])-1),2))
+    return np.array(B)
 
 
 def arr_4(A):
@@ -276,7 +297,18 @@ def arr_4(A):
     True
     """
 
-    return ...
+    money = 20
+    length = len(A)
+    out = -1
+    for i in np.arange(length):
+        ori = math.floor(20/A[i])
+        new = math.floor(money/A[i])
+        if new>ori:
+            out = i
+            return out
+        left = money%A[i]
+        money += left
+    return out
 
 
 # ---------------------------------------------------------------------
@@ -303,7 +335,31 @@ def movie_stats(movies):
     True
     """
 
-    return ...
+    try:
+        num_years = movies['Year'].nunique()
+        tot_movies = movies['Number of Movies'].sum()
+        yr_fewest_movies = movies.loc[movies['Number of Movies'] == movies['Number of Movies'].min()]['Year'].values[0]
+        avg_gross = movies['Total Gross'].mean()
+        avg = movies['Total Gross']/movies['Number of Movies']
+        highest_per_movie = avg.max()
+        second_lowest = movies.nsmallest(2, 'Total Gross')['#1 Movie'].values[0]
+        hp = movies.loc[movies['#1 Movie'].str.contains('Harry Potter')]['Year']
+        total = 0
+        for i in np.arange(len(hp)):
+            year = hp.values[i]+1
+            total += movies.loc[movies['Year'] == year]['Number of Movies'].values[0]
+        avg_after_harry = total/len(hp)
+    except ValueError:
+        print("Error")
+        
+    dict = {'num_years' : num_years, 
+            'tot_movies' : tot_movies, 
+            'yr_fewest_movies' : yr_fewest_movies,
+            'avg_gross' : avg_gross,
+            'highest_per_movie' : highest_per_movie,
+            'second_lowest' : second_lowest,
+            'avg_after_harry' : avg_after_harry} 
+    return pd.Series(dict)
     
 
 # ---------------------------------------------------------------------
@@ -340,7 +396,35 @@ def parse_malformed(fp):
     True
     """
 
-    return ...
+    mf = open(fp)
+    col = mf.readline()[:-1].split(",")
+    fn = []
+    ln = []
+    he = []
+    we = []
+    lo = []
+    while True:
+        line = mf.readline()
+        if line == '':
+            break
+        arr = line[:-1].split(",")
+        if len(arr)>6:
+            arr.remove('')
+        #print(arr)
+        fn.append(arr[0])
+        ln.append(arr[1])
+        we.append(float(arr[2].replace('"','')))
+        he.append(float(arr[3].replace('"','')))
+        lo.append((arr[4].replace('"',''))+","+(arr[5].replace('"','')))
+    afn = np.array(fn)
+    aln = np.array(ln)
+    ahe = np.array(he)
+    awe = np.array(we)
+    alo = np.array(lo)
+    #df = pd.DataFrame(np.array([afn,aln,ahe,awe,alo]),columns=col)
+    d = {'first': afn, 'last': aln, 'weight': awe, 'height': ahe, 'geo': alo}
+    df = pd.DataFrame(data=d)
+    return df
 
 
 # ---------------------------------------------------------------------
