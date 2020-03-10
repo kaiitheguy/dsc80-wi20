@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 import seaborn as sns
+import os
+from scipy import stats
 
 from sklearn.preprocessing import Binarizer, QuantileTransformer, FunctionTransformer
 
@@ -20,8 +22,25 @@ def best_transformation():
 
     # take log and square root of the dataset
     # look at the fit of the regression line (and R^2)
-
-    return ...
+    
+    homeruns_fp = os.path.join('data', 'homeruns.csv')
+    homeruns = pd.read_csv(homeruns_fp)
+    x = homeruns['Year']
+    y0 = homeruns['Homeruns']
+    y1 = y0**(.5)
+    y2 = np.log(y0)
+    slope1, intercept1, r_value1, p_value1, std_err1 = stats.linregress(x, y1)
+    slope2, intercept2, r_value2, p_value2, std_err2 = stats.linregress(x, y2)
+    print(slope1)
+    print(slope2)
+    if slope1>3 and slope3>3:
+        return 4
+    elif abs(slope1-slope2)<1:
+        return 3
+    elif slope1>slope2:
+        return 1
+    else:
+        return 2
 
 # ---------------------------------------------------------------------
 # Question # 2
