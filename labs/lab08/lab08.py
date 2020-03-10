@@ -62,6 +62,9 @@ def create_ordinal(df):
     True
     """
     
+    enc = OrdinalEncoder()
+    enc.fit([diamonds['cut'],diamonds['clarity'],diamonds['color']])
+    enc.transform([diamonds['cut'],diamonds['clarity'],diamonds['color']])
     return ...
 
 # ---------------------------------------------------------------------
