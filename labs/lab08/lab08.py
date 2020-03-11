@@ -223,8 +223,8 @@ def comparing_performance():
 
     # create a model per variable => (variable, R^2, RMSE) table
 
-    return [0.9697467062649333, 0.08244625824198684, 'price',
-            'carat*price', 'quadratic features', 0.11052802310683463]
+    return [0.8493305264354857, 1548.5331930613174, 'x',
+            'carat*price', 'quadratic features', 0.04143165553562414]
 
 # ---------------------------------------------------------------------
 # Question # 6, 7, 8
@@ -253,7 +253,9 @@ class TransformDiamonds(object):
         True
         """
 
-        return ...
+        bi = Binarizer(threshold = 1)                     # initialize with the parameter
+        binarized = bi.transform(data[['carat']])         # called transform on a data 
+        return binarized
     
     def transform_to_quantile(self, data):
         """
@@ -273,7 +275,10 @@ class TransformDiamonds(object):
         True
         """
 
-        return ...
+        qt = QuantileTransformer()
+        qt.fit(self.data[['carat']])
+        quantiled = qt.transform(data[['carat']])
+        return quantiled
     
     def transform_to_depth_pct(self, data):
         """
@@ -290,8 +295,9 @@ class TransformDiamonds(object):
         >>> np.isclose(transformed[0], 61.286, atol=0.0001)
         True
         """
-
-        return ...
+        transformer = FunctionTransformer(func=lambda d: d['z']*200/(d['x']+d['y']))
+        result = transformer.transform(data)
+        return result
 
 
 # ---------------------------------------------------------------------
