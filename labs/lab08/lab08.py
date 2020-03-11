@@ -62,11 +62,21 @@ def create_ordinal(df):
     True
     """
     
-    enc = OrdinalEncoder()
-    enc.fit([diamonds['cut'],diamonds['clarity'],diamonds['color']])
-    enc.transform([diamonds['cut'],diamonds['clarity'],diamonds['color']])
-    return ...
+    #enc = OrdinalEncoder()
+    #enc.fit([diamonds['cut'],diamonds['clarity'],diamonds['color']])
+    #enc.transform([diamonds['cut'],diamonds['clarity'],diamonds['color']])
+    df = df.select_dtypes(exclude=['int64','float','int'])
+    reldf = df.apply(ord_col)
+    reldf = reldf.rename(columns=lambda s: 'ordinal_'+s)
+    return reldf
 
+def ord_col(col):
+    rel = col.copy()
+    uni = col.unique()
+    for i in np.arange(len(rel)):
+        idx = np.where(uni==rel[i])[0][0]
+        rel[i] = idx
+    return rel
 # ---------------------------------------------------------------------
 # Question # 3
 # ---------------------------------------------------------------------
@@ -90,8 +100,23 @@ def create_one_hot(df):
     True
     """
     
-    return ...
+    df = df.select_dtypes(exclude=['int64','float','int'])
+    reldf = df.apply(ord_col)
+    reldf = reldf.rename(columns=lambda s: 'ordinal_'+s)
+    return reldf
 
+def hot_col(col):
+    uni = col.unique()
+    lists = []
+    for j in np.arange(len(uni)):
+        rel = col.copy()
+        for i in np.arange(len(rel)):
+            idx = (uni[j]==rel[i])
+            rel[i] = idx
+        lists.append(rel)
+    arrs = np.array(lists)
+    df = pd.DataFrame(
+    return rel
 
 def create_proportions(df):
     """
@@ -110,7 +135,20 @@ def create_proportions(df):
     True
     """
 
-    return ...
+    df = df.select_dtypes(exclude=['int64','float','int'])
+    reldf = df.apply(pro_col)
+    reldf = reldf.rename(columns=lambda s: 'proportion_'+s)
+    return reldf
+
+def pro_col(col):
+    rel = col.copy()
+    val = col.value_counts()
+    tol = len(rel)
+    
+    for i in np.arange(len(rel)):
+        num = val[rel[i]]
+        rel[i] = num/tol
+    return rel
 
 # ---------------------------------------------------------------------
 # Question # 4
