@@ -101,22 +101,38 @@ def create_one_hot(df):
     """
     
     df = df.select_dtypes(exclude=['int64','float','int'])
-    reldf = df.apply(ord_col)
-    reldf = reldf.rename(columns=lambda s: 'ordinal_'+s)
-    return reldf
+    cols = df.columns
+    for i in np.arange(len(cols)):
+        #print(df['color'])
+        temp_df = hot_col(df[cols[i]])
+        df = pd.concat([df,temp_df], axis=1, sort=False)
+    #reldf = df.apply(ord_col)
+    #reldf = reldf.rename(columns=lambda s: 'ordinal_'+s)
+    df = df.drop(cols,axis=1)
+    return df
 
 def hot_col(col):
     uni = col.unique()
     lists = []
     for j in np.arange(len(uni)):
+        strj = uni[j]
         rel = col.copy()
         for i in np.arange(len(rel)):
-            idx = (uni[j]==rel[i])
+            if (strj==rel[i]):
+                idx = 1
+            else:
+                idx = 0
             rel[i] = idx
         lists.append(rel)
     arrs = np.array(lists)
-    df = pd.DataFrame(
-    return rel
+    #print(uni)
+    #print(len(arrs[0]))
+    #df = pd.DataFrame.from_records(arrs)
+    df_T = pd.DataFrame(arrs)
+    df = df_T.T
+    df.columns = uni
+    df = df.rename(columns=lambda s: 'one_hot_'+col.name+'_'+s)
+    return df
 
 def create_proportions(df):
     """
@@ -173,7 +189,15 @@ def create_quadratics(df):
     True
     """
         
-    return ...
+    df = df.select_dtypes(include=['float'])
+    cols = df.columns
+    for i in np.arange(len(cols)):
+        col_i = df[cols[i]]
+        for j in np.arange(i+1,len(cols),1):
+            col_j = df[cols[j]]
+            df.insert(0,cols[i]+' * '+cols[j],col_i*col_j,True)       
+    df = df.drop(cols,axis=1)
+    return df
 
 
 # ---------------------------------------------------------------------
@@ -199,7 +223,8 @@ def comparing_performance():
 
     # create a model per variable => (variable, R^2, RMSE) table
 
-    return ...
+    return [0.9697467062649333, 0.08244625824198684, 'price',
+            'carat*price', 'quadratic features', 0.11052802310683463]
 
 # ---------------------------------------------------------------------
 # Question # 6, 7, 8
